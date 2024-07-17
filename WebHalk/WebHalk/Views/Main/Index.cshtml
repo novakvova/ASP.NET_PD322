@@ -1,6 +1,19 @@
-﻿
+﻿@model IList<CategoryItemViewModel>
 <div class="container">
     <h1 class="text-center">Тактичне спрорядження</h1>
+    <div class="row">
 
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card" style="width: 100%;">
+                    <img src="@item.Image" class="card-img-top img-fluid" alt="@item.Name">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 
 </div>
