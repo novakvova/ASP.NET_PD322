@@ -2,7 +2,7 @@
 
 <div class="container">
 
-    <form method="post" class="col-md-6 offset-md-3">
+    <form asp-action="Create" class="col-md-6 offset-md-3">
 
         <h1 class="text-center">Додати категорію</h1>
 
@@ -24,3 +24,8 @@
     </form>
 
 </div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
+

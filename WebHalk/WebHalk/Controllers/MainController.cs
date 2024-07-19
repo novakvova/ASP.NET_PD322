@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebHalk.Data;
+using WebHalk.Data.Entities;
 using WebHalk.Models.Categories;
 
 namespace WebHalk.Controllers
@@ -35,6 +36,14 @@ namespace WebHalk.Controllers
         {
             if (!ModelState.IsValid)
                 return View(model);
+
+            CategoryEntity entity = new CategoryEntity()
+            {
+                Image = model.Image,
+                Name = model.Name,
+            };
+            _hulkDbContext.Categories.Add(entity);
+            _hulkDbContext.SaveChanges();
 
             return RedirectToAction(nameof(Index));
         }
