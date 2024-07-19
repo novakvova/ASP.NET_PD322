@@ -24,5 +24,19 @@ namespace WebHalk.Controllers
                 .ToList();
             return View(list);
         }
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(CategoryCreateViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

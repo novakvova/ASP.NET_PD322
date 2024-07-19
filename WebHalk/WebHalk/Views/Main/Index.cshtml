@@ -1,7 +1,9 @@
 ﻿@model IList<CategoryItemViewModel>
 <div class="container">
     <h1 class="text-center">Тактичне спрорядження</h1>
-    <div class="row">
+
+    <a href="/main/create" class="btn btn-success">Додати</a>
+    <div class="row mt-4">
 
         @foreach (var item in Model)
         {

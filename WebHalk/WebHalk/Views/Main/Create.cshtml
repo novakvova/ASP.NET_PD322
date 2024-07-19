@@ -1,0 +1,26 @@
+﻿@model CategoryCreateViewModel
+
+<div class="container">
+
+    <form method="post" class="col-md-6 offset-md-3">
+
+        <h1 class="text-center">Додати категорію</h1>
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Image" class="form-label"></label>
+            <input asp-for="Image" class="form-control" />
+            <span asp-validation-for="Image" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Додати</button>
+        <a href="/" class="btn btn-dark">Скасувати</a>
+
+    </form>
+
+</div>
