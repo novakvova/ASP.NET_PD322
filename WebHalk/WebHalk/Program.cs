@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using WebHalk.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,19 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
 }
 app.UseStaticFiles();
+
+string dirSave = Path.Combine(Directory.GetCurrentDirectory(), "images");
+if (!Directory.Exists(dirSave))
+{
+    Directory.CreateDirectory(dirSave); 
+}
+
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(dirSave),
+    RequestPath = "/images"
+});
 
 app.UseRouting();
 

@@ -7,8 +7,9 @@ namespace WebHalk.Models.Categories
         [Display(Name="Назва")]
         [Required(ErrorMessage ="Вкажіть назву категорії")]
         public string Name { get; set; } = string.Empty;
-        [Display(Name = "Фото url")]
-        [Required(ErrorMessage = "Вкажіть адерсу фото")]
-        public string Image { get; set; } = string.Empty;
+        [Display(Name = "Оберіть фото на ПК")]
+        [Required(ErrorMessage = "Оберіть фото")]
+        [DataType(DataType.Upload)]
+        public IFormFile? Image { get; set; }
     }
 }

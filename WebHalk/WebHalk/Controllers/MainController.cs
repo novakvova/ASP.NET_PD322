@@ -32,14 +32,25 @@ namespace WebHalk.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CategoryCreateViewModel model)
+        public async Task<IActionResult> Create(CategoryCreateViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
+            string ext = System.IO.Path.GetExtension(model.Image.FileName);
+
+            string fileName = Guid.NewGuid().ToString()+ext;
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "images", fileName);
+
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await model.Image.CopyToAsync(stream);
+            }
+
             CategoryEntity entity = new CategoryEntity()
             {
-                Image = model.Image,
+                Image = fileName,
                 Name = model.Name,
             };
             _hulkDbContext.Categories.Add(entity);
