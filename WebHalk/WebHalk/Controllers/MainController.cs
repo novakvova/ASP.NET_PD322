@@ -47,5 +47,18 @@ namespace WebHalk.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var item = _hulkDbContext.Categories.Find(id);
+
+            if (item == null) return NotFound();
+
+            _hulkDbContext.Categories.Remove(item);
+            _hulkDbContext.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

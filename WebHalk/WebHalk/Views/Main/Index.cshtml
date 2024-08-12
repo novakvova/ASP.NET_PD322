@@ -12,6 +12,37 @@
                     <img src="@item.Image" class="card-img-top img-fluid" alt="@item.Name">
                     <div class="card-body">
                         <h5 class="card-title">@item.Name</h5>
+
+                        <div class="d-flex justify-content-between mt-auto">
+                            <a href="/main/edit/@item.Id" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="#" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-@item.Id">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="modal fade" id="deleteModal-@item.Id" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel-@item.Id">Видалення категорії</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Ви дійсно хочете видалити "@item.Name"?</p>
+                            <form method="post" action="/Main/Delete">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-danger">Видалити</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
