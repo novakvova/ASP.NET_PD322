@@ -14,7 +14,8 @@
                         <h5 class="card-title">@item.Name</h5>
 
                         <div class="d-flex justify-content-between mt-auto">
-                            <a href="/main/edit/@item.Id" class="btn btn-outline-secondary btn-sm">
+                            <a asp-action="Edit" asp-route-id="@item.Id" 
+                                class="btn btn-outline-secondary btn-sm">
                                 <i class="bi bi-pencil"></i>
                             </a>
                             <a href="#" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-@item.Id">
