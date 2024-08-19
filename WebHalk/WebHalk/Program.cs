@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using WebHalk.Data;
 using WebHalk.Mapper;
+using WebHalk.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddDbContext<HulkDbContext>(opt =>
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddAutoMapper(typeof(AppMapProfile));
+builder.Services.AddScoped<DataSeeder>();
 
 var app = builder.Build();
 
@@ -42,5 +44,14 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Main}/{action=Index}/{id?}");
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<HulkDbContext>();
+    //dbContext.Database.EnsureDeleted();
+    dbContext.Database.Migrate();
+    var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
+    seeder.SeedProducts();
+}
 
 app.Run();
