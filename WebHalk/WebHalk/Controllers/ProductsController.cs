@@ -64,24 +64,21 @@ namespace WebHalk.Controllers
             await _context.SaveChangesAsync();
             if (model.Photos != null)
             {
+                int i = 0;
 
                 foreach (var img in model.Photos)
                 {
-
                     string ext = System.IO.Path.GetExtension(img.FileName);
-
                     string fileName = Guid.NewGuid().ToString() + ext;
-
                     var path = Path.Combine(Directory.GetCurrentDirectory(), "images", fileName);
-
                     using (var stream = new FileStream(path, FileMode.Create))
                     {
                         await img.CopyToAsync(stream);
                     }
-
                     var imgEntity = new ProductImageEntity
                     {
                         Image = fileName,
+                        Priotity = i++,
                         Product = prod,
                     };
                     _context.ProductImages.Add(imgEntity);
@@ -99,6 +96,19 @@ namespace WebHalk.Controllers
                 .ProjectTo<ProductEditViewModel>(_mapper.ConfigurationProvider)
                 .FirstOrDefault(x => x.Id == id)
                 ?? throw new Exception("An error occurred while receiving the product");
+
+            var categories = _context.Categories
+                .Select(x => new { Value = x.Id, Text = x.Name })
+                .ToList();
+
+            model.CategoryList = new SelectList(categories, "Value", "Text");
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(ProductEditViewModel model)
+        {
 
             var categories = _context.Categories
                 .Select(x => new { Value = x.Id, Text = x.Name })

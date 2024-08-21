@@ -12,7 +12,7 @@ namespace WebHalk.Models.Products
         [Display(Name = "Category")]
         [Required(ErrorMessage = "Choose a category")]
         public int CategoryId { get; set; }
-        public List<string>? Images { get; set; }
+        public List<ProductImageViewModel>? Images { get; set; }
 
         [Display(Name = "New images")]
         public List<IFormFile>? NewImages { get; set; }

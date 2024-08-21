@@ -16,7 +16,12 @@ namespace WebHalk.Mapper
 
             CreateMap<ProductEntity, ProductEditViewModel>()
                 .ForMember(x => x.Images, 
-                    opt => opt.MapFrom(src => src.ProductImages.Select(p => p.Image).ToList()));
+                    opt => opt.MapFrom(src => src.ProductImages.Select(pi => new ProductImageViewModel
+                    {
+                        Id = pi.Id,
+                        Name = "/images/"+pi.Image,
+                        Priority = pi.Priotity
+                    }).ToList()));
 
             CreateMap<ProductEditViewModel, ProductEntity>()
                 .ForMember(x => x.Id, opt => opt.Ignore());
