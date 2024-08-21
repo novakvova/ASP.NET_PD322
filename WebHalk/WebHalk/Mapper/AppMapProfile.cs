@@ -13,6 +13,13 @@ namespace WebHalk.Mapper
             CreateMap<CategoryEntity, CategoryEditViewModel>();
             CreateMap<ProductEntity, ProductItemViewModel>()
                 .ForMember(x=>x.Images, opt=>opt.MapFrom(x=>x.ProductImages.Select(p=>p.Image).ToArray()));
+
+            CreateMap<ProductEntity, ProductEditViewModel>()
+                .ForMember(x => x.Images, 
+                    opt => opt.MapFrom(src => src.ProductImages.Select(p => p.Image).ToList()));
+
+            CreateMap<ProductEditViewModel, ProductEntity>()
+                .ForMember(x => x.Id, opt => opt.Ignore());
         }
     }
 }

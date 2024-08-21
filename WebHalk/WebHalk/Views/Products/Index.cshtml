@@ -42,6 +42,14 @@
                         }
                         @name
                         <p class="card-text text-success">@p.Price.ToString("C")</p>
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-@p.Id">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -54,7 +62,7 @@
     .card {
         width: 100%;
         max-width: 300px;
-        height: 370px;
+        height: 100%;
     }
 
     .carousel-inner img, .one-img img {

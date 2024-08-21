@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Xml.Linq;
 using WebHalk.Data;
@@ -88,6 +90,23 @@ namespace WebHalk.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var model = _context.Products
+                .ProjectTo<ProductEditViewModel>(_mapper.ConfigurationProvider)
+                .FirstOrDefault(x => x.Id == id)
+                ?? throw new Exception("An error occurred while receiving the product");
+
+            var categories = _context.Categories
+                .Select(x => new { Value = x.Id, Text = x.Name })
+                .ToList();
+
+            model.CategoryList = new SelectList(categories, "Value", "Text");
+
+            return View(model);
         }
 
     }
