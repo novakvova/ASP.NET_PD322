@@ -7,7 +7,9 @@ namespace WebHalk.Models.Products
     {
         public int Id { get; set; }
         public string Name { get; set; } = String.Empty;
-        public decimal Price { get; set; }
+        [Display(Name = "Вкажіть ціну хх,хх")]
+        [RegularExpression(@"^\d+(\,\d{1,2})?$", ErrorMessage = "Введите корректное ціну.")]
+        public string? Price { get; set; }
         public SelectList? CategoryList { get; set; }
         [Display(Name = "Category")]
         [Required(ErrorMessage = "Choose a category")]

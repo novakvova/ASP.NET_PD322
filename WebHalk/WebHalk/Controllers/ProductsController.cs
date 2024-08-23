@@ -35,12 +35,12 @@ namespace WebHalk.Controllers
         public IActionResult Create()
         {
             var categories = _context.Categories
-                .Select(x=>new {Value = x.Id, Text=x.Name})
+                .Select(x => new { Value = x.Id, Text = x.Name })
                 .ToList();
 
             ProductCreateViewModel viewModel = new()
             {
-                CategoryList=new Microsoft.AspNetCore.Mvc.Rendering.SelectList(categories, "Value", "Text")
+                CategoryList = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(categories, "Value", "Text")
             };
 
             return View(viewModel);
@@ -106,17 +106,87 @@ namespace WebHalk.Controllers
             return View(model);
         }
 
+        //[HttpPost]
+        //public IActionResult Edit(ProductEditViewModel model)
+        //{
+
+        //    var categories = _context.Categories
+        //        .Select(x => new { Value = x.Id, Text = x.Name })
+        //        .ToList();
+
+        //    model.CategoryList = new SelectList(categories, "Value", "Text");
+
+        //    return View(model);
+        //}
+
         [HttpPost]
-        public IActionResult Edit(ProductEditViewModel model)
+        public async Task<IActionResult> Edit(ProductEditViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
 
-            var categories = _context.Categories
-                .Select(x => new { Value = x.Id, Text = x.Name })
-                .ToList();
+                var editProduct = _context.Products
+                    .ProjectTo<ProductEditViewModel>(_mapper.ConfigurationProvider)
+                    .FirstOrDefault(x => x.Id == model.Id)
+                    ?? throw new Exception("An error occurred while receiving the product");
 
-            model.CategoryList = new SelectList(categories, "Value", "Text");
+                var categories = _context.Categories
+                    .Select(x => new { Value = x.Id, Text = x.Name })
+                    .ToList();
 
-            return View(model);
+                model.CategoryList = new SelectList(categories, "Value", "Text");
+                model.Images = editProduct.Images;
+
+                return View(model);
+            }
+
+
+
+            var product = await _context.Products
+                .FirstOrDefaultAsync(p => p.Id == model.Id)
+                ?? throw new Exception("No product was found");
+            _mapper.Map(model, product);
+
+            if (model.NewImages != null)
+            {
+                foreach (var img in model.NewImages)
+                {
+                    if (img.Length > 0)
+                    {
+                        string ext = Path.GetExtension(img.FileName);
+                        string fName = Guid.NewGuid().ToString() + ext;
+                        var path = Path.Combine(Directory.GetCurrentDirectory(), "images", fName);
+
+                        using (var fs = new FileStream(path, FileMode.Create))
+                            await img.CopyToAsync(fs);
+
+                        var imgEntity = new ProductImageEntity
+                        {
+                            Image = fName,
+                            Product = product
+                        };
+                        _context.ProductImages.Add(imgEntity);
+                    }
+                }
+            }
+
+            if (model.DeletedPhotoIds != null)
+            {
+                var photos = _context.ProductImages
+                    .Where(pi => model.DeletedPhotoIds.Contains(pi.Id))
+                    .ToList();
+
+                _context.ProductImages.RemoveRange(photos);
+
+                foreach (var photo in photos)
+                {
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "images", photo.Image);
+                    if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
+                }
+            }
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
     }
