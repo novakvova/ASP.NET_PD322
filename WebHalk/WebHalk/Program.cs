@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using WebHalk.Data;
+using WebHalk.Data.Entities.Identity;
 using WebHalk.Mapper;
 using WebHalk.Services;
 
@@ -14,6 +16,25 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddAutoMapper(typeof(AppMapProfile));
 builder.Services.AddScoped<DataSeeder>();
+
+// Identity options
+builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 6;
+    options.Password.RequiredUniqueChars = 1;
+
+    //options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    //options.Lockout.MaxFailedAccessAttempts = 5;
+    //options.Lockout.AllowedForNewUsers = true;
+
+    //options.SignIn.RequireConfirmedEmail = true;
+})
+    .AddEntityFrameworkStores<HulkDbContext>()
+    .AddDefaultTokenProviders();
 
 var app = builder.Build();
 
@@ -52,6 +73,7 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.Migrate();
     var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
     seeder.SeedProducts();
+    seeder.SeedRolesAndUsers();
 }
 
 app.Run();
