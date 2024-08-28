@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using System.Globalization;
 using WebHalk.Data.Entities;
+using WebHalk.Data.Entities.Identity;
+using WebHalk.Models.Account;
 using WebHalk.Models.Categories;
 using WebHalk.Models.Products;
 
@@ -28,6 +30,9 @@ namespace WebHalk.Mapper
             CreateMap<ProductEditViewModel, ProductEntity>()
                 .ForMember(x => x.Id, opt => opt.Ignore())
                 .ForMember(x=>x.Price, opt=>opt.MapFrom(x=>Decimal.Parse(x.Price, new CultureInfo("uk-UA"))));
+
+            CreateMap<UserEntity, ProfileViewModel>()
+                .ForMember(x=>x.FullName, opt=>opt.MapFrom(x=>$"{x.LastName} {x.FirstName}"));
         }
     }
 }

@@ -60,6 +60,8 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.UseRouting();
 
+app.UseCookiePolicy();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
