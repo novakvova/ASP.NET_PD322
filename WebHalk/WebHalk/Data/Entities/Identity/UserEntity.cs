@@ -11,6 +11,9 @@ namespace WebHalk.Data.Entities.Identity
         [StringLength(100)]
         public string? LastName { get; set; }
 
+        [StringLength(200)]
+        public string? Image { get; set; }
+
         public ICollection<UserRoleEntity>? UserRoles { get; set; }
     }
 }

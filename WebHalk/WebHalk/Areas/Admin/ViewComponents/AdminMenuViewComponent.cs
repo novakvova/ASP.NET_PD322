@@ -18,6 +18,7 @@ namespace WebHalk.Areas.Admin.ViewComponents
             ProfileItemViewModel model = new ProfileItemViewModel();
             model.FirstName = user.FirstName;
             model.LastName = user.LastName;
+            model.Image = user.Image;
 
             return View(model);
         }
