@@ -7,7 +7,7 @@ namespace WebHalk.Areas.Admin.ViewComponents
 {
     public class AdminMenuViewComponent : ViewComponent
     {
-        private UserManager<UserEntity> _userManager;
+        private readonly UserManager<UserEntity> _userManager;
         public AdminMenuViewComponent(UserManager<UserEntity> userManager)
         {
             _userManager = userManager;

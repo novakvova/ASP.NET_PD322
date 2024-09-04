@@ -105,5 +105,11 @@ namespace WebHalk.Controllers
 
             return View(model);
         }
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }
