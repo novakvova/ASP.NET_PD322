@@ -2,7 +2,7 @@
 
 <div class="container mt-3 mb-5">
     <h2 class="text-center">Продукти</h2>
-    <a asp-action="Create" class="btn btn-secondary my-3">Додати</a>
+    @* <a asp-action="Create" class="btn btn-secondary my-3">Додати</a> *@
     <div class="row">
         @foreach (var p in Model)
         {
@@ -20,12 +20,12 @@
                                     </div>
                                 }
                             </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-@p.Id" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon"></span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#carousel-@p.Id" data-bs-slide="next">
-                                <span class="carousel-control-next-icon"></span>
-                            </button>
+                             <button class="carousel-control-prev" type="button" data-bs-target="#carousel-@p.Id" data-bs-slide="prev">
+                                 <span class="carousel-control-prev-icon"></span>
+                             </button>
+                             <button class="carousel-control-next" type="button" data-bs-target="#carousel-@p.Id" data-bs-slide="next">
+                                 <span class="carousel-control-next-icon"></span>
+                             </button>
                         </div>
                     }
                     else
@@ -42,14 +42,14 @@
                         }
                         @name
                         <p class="card-text text-success">@p.Price.ToString("C")</p>
-                        <div class="d-flex justify-content-between">
+                        @* <div class="d-flex justify-content-between">
                             <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-outline-secondary btn-sm">
                                 <i class="bi bi-pencil"></i>
                             </a>
                             <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-@p.Id">
                                 <i class="bi bi-trash"></i>
                             </a>
-                        </div>
+                        </div> *@
                     </div>
                 </div>
             </div>
