@@ -3,6 +3,9 @@ using WebHalk.Data;
 using Microsoft.AspNetCore.Identity;
 using WebHalk.Data.Entities.Identity;
 using WebHalk.Constants;
+using Bogus;
+using static System.Net.WebRequestMethods;
+using WebHalk.Interfaces;
 
 namespace WebHalk.Services
 {
@@ -11,51 +14,71 @@ namespace WebHalk.Services
         private readonly HulkDbContext _context;
         private readonly UserManager<UserEntity> _userManager;
         private readonly RoleManager<RoleEntity> _roleManager;
+        private readonly IImageWorker _imageWorker;
 
-        public DataSeeder(HulkDbContext context, UserManager<UserEntity> userManager, RoleManager<RoleEntity> roleManager)
+        public DataSeeder(HulkDbContext context, UserManager<UserEntity> userManager,
+            IImageWorker imageWorker,
+            RoleManager<RoleEntity> roleManager)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
+            _imageWorker = imageWorker;
         }
         public void SeedProducts()
         {
             if (_context.Products.Count() == 0)
             {
-                var c1 = new CategoryEntity 
-                { 
-                    Name = "Laptops", 
-                    Image = "eb47fa37-007c-4d3e-be5e-a5ccb7600320.jpg" 
-                };
+                int number = 10;
+                var listCategories = new Faker("uk") // Specify Ukrainian locale (optional)
+                        .Commerce.Categories(number);
+                string url = "https://picsum.photos/1200/800?category";
+                foreach ( var categoryName in listCategories) 
+                {
+                    var imgName = _imageWorker.ImageSave(url);
+                    if (!String.IsNullOrEmpty(imgName)) {
+                        var catEntity = new CategoryEntity
+                        {
+                            Name = categoryName,
+                            Image = imgName,
+                        };
+                        _context.Add(catEntity);
+                        _context.SaveChanges();
+                    }
+                    
+                }
 
-                _context.Categories.Add(c1);
-                _context.SaveChanges();
+                var categories = _context.Categories.ToList();
 
-                var p1 = new ProductEntity 
-                { 
-                    Name = "Ноутбук HP EliteBook 840 G10", 
-                    Category = c1, 
-                    Price= 2350.00m
-                };
+                var fakerProduct = new Faker<ProductEntity>("uk")
+                    .RuleFor(u => u.Name, (f, u) => f.Commerce.Product())
+                    .RuleFor(u => u.Price, (f, u) => decimal.Parse(f.Commerce.Price()))
+                    .RuleFor(u=> u.Category, (f,u)=> f.PickRandom(categories));
 
-                var p2 = new ProductEntity 
-                { 
-                    Name = "Ноутбук Dell Latitude 7640", 
-                    Category = c1,
-                    Price= 2020.00m
-                };
+                url = "https://picsum.photos/1200/800?product";
 
-                _context.Products.AddRange(p1, p2);
-                _context.ProductImages.AddRange(
-                    new ProductImageEntity { Image = "p_1(1).webp", Product = p1 },
-                    new ProductImageEntity { Image = "p_1(2).webp", Product = p1 },
-                    new ProductImageEntity { Image = "p_1(3).webp", Product = p1 },
+                var products = fakerProduct.GenerateLazy(1000);
+                Random r = new Random();
 
-                    new ProductImageEntity { Image = "p_2(1).webp", Product = p2 },
-                    new ProductImageEntity { Image = "p_2(2).webp", Product = p2 },
-                    new ProductImageEntity { Image = "p_2(3).webp", Product = p2 }
-                );
-                _context.SaveChanges();
+                foreach (var product in products)
+                {
+                    _context.Add(product);
+                    _context.SaveChanges();
+                    int imageCount = r.Next(3, 5);
+                    for (int i = 0; i < imageCount; i++)
+                    {
+                        var imageName = _imageWorker.ImageSave(url);
+                        var imageProduct = new ProductImageEntity
+                        {
+                            Product = product,
+                            Image = imageName,
+                            Priotity = i
+                        };
+                        _context.Add(imageProduct);
+                        _context.SaveChanges();
+                    }
+
+                }
             }
         }
 
