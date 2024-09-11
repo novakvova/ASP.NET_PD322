@@ -1,7 +1,16 @@
-﻿@model List<ProductItemViewModel>
+﻿@using System.Diagnostics
+@model List<ProductItemViewModel>
+
+@{
+    Stopwatch stopWatch = new Stopwatch();
+    stopWatch.Start();
+}
 
 <div class="container mt-3 mb-5">
     <h2 class="text-center">Продукти</h2>
+
+    @await Html.PartialAsync("_ProductSearchItems", new ProductSearchViewModel())
+
     @* <a asp-action="Create" class="btn btn-secondary my-3">Додати</a> *@
     <div class="row">
         @foreach (var p in Model)
@@ -99,3 +108,16 @@
     }
 
 </style>
+
+@{
+    stopWatch.Stop();
+    // Get the elapsed time as a TimeSpan value.
+    TimeSpan ts = stopWatch.Elapsed;
+
+    // Format and display the TimeSpan value.
+    string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+        ts.Hours, ts.Minutes, ts.Seconds,
+        ts.Milliseconds / 10);
+
+    Console.WriteLine("RunTime ProductsController Index View - " + elapsedTime);
+}

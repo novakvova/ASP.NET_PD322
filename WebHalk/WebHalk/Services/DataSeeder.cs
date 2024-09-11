@@ -57,7 +57,7 @@ namespace WebHalk.Services
 
                 url = "https://picsum.photos/1200/800?product";
 
-                var products = fakerProduct.GenerateLazy(1000);
+                var products = fakerProduct.GenerateLazy(100);
                 Random r = new Random();
 
                 foreach (var product in products)
