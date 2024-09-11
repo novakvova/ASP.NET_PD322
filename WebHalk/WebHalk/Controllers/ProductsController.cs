@@ -32,8 +32,9 @@ namespace WebHalk.Controllers
             var query = _context.Products.AsQueryable();
 
             if (!string.IsNullOrEmpty(search.Name))
-                query = query.Where(x => x.Name.Contains(search.Name));
+                query = query.Where(x => x.Name.ToLower().Contains(search.Name.ToLower()));
 
+            int count = query.Count();
             int page = search.Page ?? 1;
             int pageSize = search.PageSize;
 
@@ -54,9 +55,21 @@ namespace WebHalk.Controllers
                 ts.Hours, ts.Minutes, ts.Seconds,
                 ts.Milliseconds / 10);
 
+            ProductHomeViewModel model = new ProductHomeViewModel
+            {
+                Search = search,
+                Products = list,
+                Count = count,
+                Pagination = new PaginationViewModel
+                {
+                    PageSize = pageSize,
+                    TotalItems = count
+                }
+            };
+
             Console.WriteLine("RunTime ProductsController Index" + elapsedTime);
 
-            return View(list);
+            return View(model);
         }
 
     }
