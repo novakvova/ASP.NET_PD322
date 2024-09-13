@@ -1,4 +1,5 @@
 using ApiStore.Data;
+using ApiStore.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,5 +26,27 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
+
+
+#pragma warning restore ASP0014 // Suggest using top level route registrations
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApiStoreDbContext>();
+    //dbContext.Database.EnsureDeleted();
+    dbContext.Database.Migrate();
+
+    if(dbContext.Categories.Count()==0)
+    {
+        var cat = new CategoryEntity
+        {
+            Name="Собаки",
+            Description="Собаки на довільні впобання та розмір.",
+            Image="dog.jpg"
+        };
+        dbContext.Categories.Add(cat);
+        dbContext.SaveChanges();
+    }
+}
 
 app.Run();
