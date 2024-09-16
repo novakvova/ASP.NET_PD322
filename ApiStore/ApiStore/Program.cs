@@ -1,6 +1,7 @@
 using ApiStore.Data;
 using ApiStore.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,12 +17,28 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseCors(opt =>
+    opt.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+string imagesDirPath = Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration["ImagesDir"]);
+
+if (!Directory.Exists(imagesDirPath))
+{
+    Directory.CreateDirectory(imagesDirPath);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(imagesDirPath),
+    RequestPath = "/images"
+});
 
 app.UseAuthorization();
 
