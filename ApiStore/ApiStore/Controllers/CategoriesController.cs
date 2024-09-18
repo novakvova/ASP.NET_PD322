@@ -1,5 +1,7 @@
 ﻿using ApiStore.Data;
+using ApiStore.Data.Entities;
 using ApiStore.Models.Category;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SixLabors.ImageSharp;
@@ -12,7 +14,8 @@ namespace ApiStore.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController(
-        ApiStoreDbContext context, IConfiguration configuration) : ControllerBase
+        ApiStoreDbContext context, IConfiguration configuration,
+        IMapper mapper) : ControllerBase
     {
         [HttpGet]
         public IActionResult GetList()
@@ -50,6 +53,10 @@ namespace ApiStore.Controllers
                     }
                 }
             }
+            var entity =  mapper.Map<CategoryEntity>(model);
+            entity.Image = imageName;
+            context.Categories.Add(entity);
+            context.SaveChanges();
             return Ok();
         }
     }
