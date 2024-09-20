@@ -20,7 +20,7 @@ const CategoryCreatePage = () => {
         http_common.post<ICategoryCreate>("/api/categories", values,
             {headers: {"Content-Type": "multipart/form-data"}})
             .then(resp => {
-
+                console.log("Craete category", resp.data);
                 navigate('/');
             })
     }
