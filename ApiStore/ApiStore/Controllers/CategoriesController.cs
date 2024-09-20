@@ -15,7 +15,7 @@ namespace ApiStore.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController(
-        ApiStoreDbContext context, IImageHulk imageHulk
+        ApiStoreDbContext context, IImageHulk imageHulk,
         IMapper mapper) : ControllerBase
     {
         [HttpGet]
@@ -35,7 +35,20 @@ namespace ApiStore.Controllers
             context.SaveChanges();
             return Ok();
         }
-    
-    
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var entity = context.Categories.SingleOrDefault(x => x.Id == id);
+            if (entity == null)
+                return NotFound();
+            if(!string.IsNullOrEmpty(entity.Image))
+                imageHulk.Delete(entity.Image);
+            context.Categories.Remove(entity);
+            context.SaveChanges();
+            return Ok();
+        }
+
+
     }
 }

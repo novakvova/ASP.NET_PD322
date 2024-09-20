@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {ICategoryItem} from "./types.ts";
 import {API_URL, http_common} from "../../env";
 import {Link} from "react-router-dom";
-import {DeleteOutlined} from '@ant-design/icons';
+import {DeleteDialog} from "../common/DeleteDialog.tsx";
 
 const HomePage = () => {
     const [list, setList] = useState<ICategoryItem[]>([]);
@@ -14,6 +14,17 @@ const HomePage = () => {
                 setList(resp.data);
             });
     }, []);
+
+    const hamdleDelete = async (id: number) => {
+        //console.log("Delete id", id);
+        try {
+            await http_common.delete("/api/categories/" + id);
+            setList(list.filter(item => item.id !== id));
+        } catch {
+            //toast
+        }
+
+    }
 
     return (
         <>
@@ -36,10 +47,9 @@ const HomePage = () => {
                                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{item.name}</h5>
                             </a>
                             <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{item.description}</p>
-                            <a href="#"
-                               className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
-                                <DeleteOutlined/>
-                            </a>
+                            <DeleteDialog title={"Ви впевнені?"}
+                                          description={`Дійсно бажаєте видалити '${item.name}'?`}
+                                          onSubmit={() => hamdleDelete(item.id)}/>
                         </div>
                     </div>
                 )}

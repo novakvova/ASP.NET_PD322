@@ -7,11 +7,35 @@ namespace ApiStore.Services
 {
     public class ImageHulk(IConfiguration configuration) : IImageHulk
     {
+        public bool Delete(string fileName)
+        {
+            try
+            {
+                var dir = configuration["ImagesDir"];
+                var sizes = configuration["ImageSizes"].Split(",")
+                    .Select(x => int.Parse(x));
+                //int[] sizes = [50, 150, 300, 600, 1200];
+                foreach (var size in sizes)
+                {
+                    string dirSave = Path.Combine(Directory.GetCurrentDirectory(),
+                        dir, $"{size}_{fileName}");
+
+                    if (File.Exists(dirSave))
+                        File.Delete(dirSave);
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public async Task<string> Save(IFormFile image)
         {
             string imageName = Guid.NewGuid().ToString() + ".webp";
             var dir = configuration["ImagesDir"];
-            
+
             using (MemoryStream ms = new())
             {
                 await image.CopyToAsync(ms);
@@ -37,7 +61,7 @@ namespace ApiStore.Services
                     }
                 }
             }
-            
+
             return imageName;
         }
     }
