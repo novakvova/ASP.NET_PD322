@@ -29,10 +29,10 @@ namespace ApiStore.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm]CategoryCreateViewModel model)
+        public async Task<IActionResult> Create([FromForm] CategoryCreateViewModel model)
         {
             var imageName = await imageHulk.Save(model.Image);
-            var entity =  mapper.Map<CategoryEntity>(model);
+            var entity = mapper.Map<CategoryEntity>(model);
             entity.Image = imageName;
             context.Categories.Add(entity);
             context.SaveChanges();
@@ -45,7 +45,7 @@ namespace ApiStore.Controllers
             var entity = context.Categories.SingleOrDefault(x => x.Id == id);
             if (entity == null)
                 return NotFound();
-            if(!string.IsNullOrEmpty(entity.Image))
+            if (!string.IsNullOrEmpty(entity.Image))
                 imageHulk.Delete(entity.Image);
             context.Categories.Remove(entity);
             context.SaveChanges();
@@ -67,7 +67,14 @@ namespace ApiStore.Controllers
             context.SaveChanges();
             return Ok();
         }
-    
-        
+
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
+            var item = context.Categories
+                .ProjectTo<CategoryItemViewModel>(mapper.ConfigurationProvider)
+                .SingleOrDefault(x=>x.Id==id);
+            return Ok(item);
+        }
     }
 }

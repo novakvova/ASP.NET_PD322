@@ -1,14 +1,14 @@
 import {ICategoryEdit} from "./types.ts";
 import {Button, Form, Input, Modal, Row, Upload, UploadFile} from "antd";
-import {Link, useNavigate} from "react-router-dom";
-import {useState} from "react";
+import {Link, useNavigate, useParams} from "react-router-dom";
+import {useEffect, useState} from "react";
 import {PlusOutlined} from '@ant-design/icons';
 import {RcFile, UploadChangeParam} from "antd/es/upload";
-import {http_common} from "../../../env";
+import {API_URL, http_common} from "../../../env";
 import {IUploadedFile} from "../create/types.ts";
 
 const CategoryEditPage = () => {
-
+    const {id} = useParams();
     const navigate = useNavigate();
     const [form] = Form.useForm<ICategoryEdit>();
 
@@ -16,15 +16,36 @@ const CategoryEditPage = () => {
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
 
+    const [file, setFile] = useState<UploadFile | null >();
+
     const onSubmit = async(values: ICategoryEdit) => {
         console.log("Send Data", values);
-        http_common.put<ICategoryEdit>("/api/categories", values,
+        http_common.put<ICategoryEdit>("/api/categories", { ...values, id: id } ,
             {headers: {"Content-Type": "multipart/form-data"}})
             .then(resp => {
                 console.log("Update category", resp.data);
                 navigate('/');
             })
     }
+
+    useEffect(() => {
+        http_common.get<ICategoryEdit>(`/api/categories/${id}`)
+            .then(resp => {
+                const {data} = resp;
+                form.setFieldsValue({
+                    ...data,
+                });
+                if(data.image!=null) {
+                    setFile({
+                       uid: '-1',
+                       name: data.name,
+                       status: "done",
+                       url: `${API_URL}/images/300_${data.image}`
+                    });
+                }
+                //console.log("get by Id", resp.data);
+            });
+    }, []);
 
     return (
         <>
@@ -71,6 +92,10 @@ const CategoryEditPage = () => {
                                 setPreviewImage(file.url || (file.preview as string));
                                 setPreviewOpen(true);
                                 setPreviewTitle(file.name || file.url!.substring(file.url!.lastIndexOf('/') + 1));
+                            }}
+                            fileList={file ? [file] : []}
+                            onChange={(data) => {
+                                setFile(data.fileList[0]);
                             }}
                             listType="picture-card"
                             maxCount={1}
