@@ -3,6 +3,7 @@ using ApiStore.Data.Entities;
 using ApiStore.Interfaces;
 using ApiStore.Models.Category;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SixLabors.ImageSharp;
@@ -21,7 +22,9 @@ namespace ApiStore.Controllers
         [HttpGet]
         public IActionResult GetList()
         {
-            var list = context.Categories.ToList();
+            var list = context.Categories
+                .ProjectTo<CategoryItemViewModel>(mapper.ConfigurationProvider)
+                .ToList();
             return Ok(list);
         }
 
@@ -49,6 +52,22 @@ namespace ApiStore.Controllers
             return Ok();
         }
 
-
+        [HttpPut]
+        public async Task<IActionResult> Edit([FromForm] CategoryEditViewModel model)
+        {
+            if (model == null) return NotFound();
+            var category = context.Categories.SingleOrDefault(x => x.Id == model.Id);
+            category = mapper.Map(model, category);
+            if (model.Image != null)
+            {
+                imageHulk.Delete(category.Image);
+                string fname = await imageHulk.Save(model.Image);
+                category.Image = fname;
+            }
+            context.SaveChanges();
+            return Ok();
+        }
+    
+        
     }
 }

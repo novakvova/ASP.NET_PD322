@@ -1,33 +1,34 @@
-import {ICategoryCreate, IUploadedFile} from "./types.ts";
+import {ICategoryEdit} from "./types.ts";
 import {Button, Form, Input, Modal, Row, Upload, UploadFile} from "antd";
 import {Link, useNavigate} from "react-router-dom";
 import {useState} from "react";
 import {PlusOutlined} from '@ant-design/icons';
 import {RcFile, UploadChangeParam} from "antd/es/upload";
 import {http_common} from "../../../env";
+import {IUploadedFile} from "../create/types.ts";
 
-const CategoryCreatePage = () => {
+const CategoryEditPage = () => {
 
     const navigate = useNavigate();
-    const [form] = Form.useForm<ICategoryCreate>();
+    const [form] = Form.useForm<ICategoryEdit>();
 
     const [previewOpen, setPreviewOpen] = useState<boolean>(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
 
-    const onSubmit = async(values: ICategoryCreate) => {
+    const onSubmit = async(values: ICategoryEdit) => {
         console.log("Send Data", values);
-        http_common.post<ICategoryCreate>("/api/categories", values,
+        http_common.put<ICategoryEdit>("/api/categories", values,
             {headers: {"Content-Type": "multipart/form-data"}})
             .then(resp => {
-                console.log("Craete category", resp.data);
+                console.log("Update category", resp.data);
                 navigate('/');
             })
     }
 
     return (
         <>
-            <h1 className={"text-center text-3xl font-bold tracking-tight text-gray-900 mb-2"}>Додати категорії</h1>
+            <h1 className={"text-center text-3xl font-bold tracking-tight text-gray-900 mb-2"}>Редагувати категорію</h1>
 
             <Form
                 form={form}
@@ -82,7 +83,6 @@ const CategoryCreatePage = () => {
                     </Form.Item>
                 </div>
 
-
                 <Row style={{display: 'flex', justifyContent: 'center'}}>
                     <Button style={{margin: 10}}
                             className={"text-white capitalize transition-colors duration-300 transform bg-blue-500"}
@@ -105,4 +105,4 @@ const CategoryCreatePage = () => {
     )
 }
 
-export default CategoryCreatePage;
+export default CategoryEditPage;
