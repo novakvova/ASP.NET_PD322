@@ -1,22 +1,16 @@
 ﻿using ApiStore.Data;
 using ApiStore.Data.Entities;
 using ApiStore.Interfaces;
-using ApiStore.Models.Category;
 using ApiStore.Models.Product;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.Formats.Webp;
-using SixLabors.ImageSharp.Processing;
 
 namespace ApiStore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProdcutsController(
+    public class ProductsController(
         ApiStoreDbContext context, IImageHulk imageHulk,
         IMapper mapper) : ControllerBase
     {
@@ -28,7 +22,30 @@ namespace ApiStore.Controllers
                 .ToList();
             return Ok(list);
         }
+        [HttpPost]
+        public async Task<IActionResult> Create([FromForm] ProductCreateViewModel model)
+        {
+            var entity = mapper.Map<ProductEntity>(model);
+            context.Products.Add(entity);
+            context.SaveChanges();
 
-        
+            if (model.Images != null)
+            {
+                var p = 1;
+                foreach (var image in model.Images)
+                {
+                    var pi = new ProductImageEntity
+                    {
+                        Image = await imageHulk.Save(image),
+                        Priority = p,
+                        ProductId = entity.Id
+                    };
+                    p++;
+                    context.ProductImages.Add(pi);
+                    await context.SaveChangesAsync();
+                }
+            }
+            return Created();
+        }
     }
 }

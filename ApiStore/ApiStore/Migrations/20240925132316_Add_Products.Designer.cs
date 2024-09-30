@@ -89,7 +89,7 @@ namespace ApiStore.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<int>("Priotity")
+                    b.Property<int>("Priority")
                         .HasColumnType("integer");
 
                     b.Property<int>("ProductId")

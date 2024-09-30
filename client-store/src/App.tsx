@@ -3,6 +3,8 @@ import {Route, Routes} from "react-router-dom";
 import HomePage from "./components/home";
 import CategoryCreatePage from "./components/category/create";
 import CategoryEditPage from "./components/category/edit";
+import ProductListPage from "./components/products/list";
+import ProductCreatePage from "./components/products/create";
 
 export default function App() {
     return (
@@ -17,6 +19,13 @@ export default function App() {
                 acts like a catch-all for URLs that we don't have explicit
                 routes for. */}
                     {/*<Route path="*" element={<NoMatch />} />*/}
+
+                    {/* PRODUCTS */}
+                    <Route path={"products"}>
+                        <Route index element={<ProductListPage />} />
+                        <Route path="create" element={<ProductCreatePage />} />
+                    </Route>
+
                 </Route>
             </Routes>
         </>
