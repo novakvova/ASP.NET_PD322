@@ -5,6 +5,7 @@ using ApiStore.Models.Product;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiStore.Controllers
 {
@@ -46,6 +47,23 @@ namespace ApiStore.Controllers
                 }
             }
             return Created();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var product = context.Products
+                .Include(x=>x.ProductImages)
+                .SingleOrDefault(x => x.Id == id);
+            if (product == null) return NotFound();
+
+            if (product.ProductImages != null)
+                foreach (var p in product.ProductImages)
+                    imageHulk.Delete(p.Image);
+
+            context.Products.Remove(product);
+            context.SaveChanges();
+            return Ok();
         }
     }
 }
