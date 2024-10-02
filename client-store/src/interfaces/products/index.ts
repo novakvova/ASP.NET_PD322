@@ -1,5 +1,5 @@
 export interface IProductItem {
-    id?: number | undefined;
+    id: number;
     name: string,
     price: string,
     images: string[],
